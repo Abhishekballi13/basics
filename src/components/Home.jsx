@@ -1,16 +1,47 @@
-import React from 'react'
-import Product from './Product'
-
+import React, { useEffect, useState } from 'react'
+import Coin from './Product';
+import axios from "axios";
+import Loader from './Loader';
 const Home = () => {
-    const arr = [1,2,3,4];
+    // const [temp,setTemp] = useState(0);
+    // useEffect(()=>{
+    //   console.log("mounted")
+    //   return () =>[
+    //     console.log("unmounted")
+    //   ]
+    // },[temp])
+ 
+   
+    const [coins,setCoins] = useState([])
+    const [loading,setLoading] = useState(true)
+
+   useEffect(()=>{
+    const fetchAllCoins = async () =>{;
+     try{
+      
+    const {data} = await axios.get("https://api.coigecko.com/api/v3/coins/markets?vs_currency=inr&per_page=20")
+    
+    setCoins(data);
+    setLoading(false);
+     }
+     catch (error){
+     alert("not working")
+     }
+    };
+
+    fetchAllCoins();
+   },[])
+
   return (
-    <div>
-    {
-        arr.map(i=>(
-            <Product value={i} key={i}/>
-        ))
-    }
-      <Product value/>
+    <div className='home'>
+    {/* <button onClick={()=>setTemp(temp+1)}>Press</button> */}
+     {
+      loading?(<Loader />):(
+          coins.map(i=>(
+             <Coin name={i.name} symbol={i.symbol} key={i.id} imgSrc={i.image} price={i.current_price}/>
+          ))
+      )
+     }
     </div>
   )
 }
